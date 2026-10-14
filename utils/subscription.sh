@@ -25,7 +25,7 @@ get_node_uri() {
         local public_key=$(echo "$node_json" | jq -r '.public_key')
         local short_id=$(echo "$node_json" | jq -r '.short_id')
         
-        uri="vless://${uuid}@${ip}:${port}?security=reality&encryption=none&pbk=${public_key}&headerType=none&fp=chrome&type=tcp&flow=xtls-rprx-vision&sni=${server_name}&sid=${short_id}#VLESS-Reality"
+        uri="vless://${uuid}@${ip}:${port}?security=reality&encryption=none&pbk=${public_key}&fp=ios&type=tcp&flow=xtls-rprx-vision&sni=${server_name}&sid=${short_id}#VLESS-Reality"
     
     elif [[ "$type" == "hysteria2" ]]; then
         local password=$(echo "$node_json" | jq -r '.password')
@@ -181,7 +181,7 @@ EOF
     udp: true
     flow: xtls-rprx-vision
     servername: $server_name
-    client-fingerprint: chrome
+    client-fingerprint: ios
     reality-opts:
       public-key: $public_key
       short-id: $short_id
