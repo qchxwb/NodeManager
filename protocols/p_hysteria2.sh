@@ -59,9 +59,13 @@ EOF
     print_ok "Hysteria2 节点添加成功！"
     rebuild_config
     
+    local cert_pin=$(get_self_signed_cert_sha256)
     print_separator
     print_info "节点信息："
     echo -e "端口: ${YELLOW}$port${PLAIN}"
     echo -e "密码: ${YELLOW}$password${PLAIN}"
+    if [[ -n "$cert_pin" ]]; then
+        echo -e "证书指纹 (SHA-256): ${CYAN}$cert_pin${PLAIN}"
+    fi
     print_separator
 }

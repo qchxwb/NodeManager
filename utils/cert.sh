@@ -14,6 +14,16 @@ generate_self_signed_cert() {
     echo "$cert_dir"
 }
 
+get_self_signed_cert_sha256() {
+    local cert_file="/etc/node-manager/certs/self_signed/cert.pem"
+    if [[ ! -f "$cert_file" ]]; then
+        generate_self_signed_cert >/dev/null 2>&1
+    fi
+    if [[ -f "$cert_file" ]]; then
+        openssl x509 -in "$cert_file" -noout -fingerprint -sha256 2>/dev/null | cut -d'=' -f2 | tr -d ':' | tr '[:upper:]' '[:lower:]'
+    fi
+}
+
 issue_zerossl_ip_cert() {
     print_separator
     print_info "开始为本机申请 Let's Encrypt IP 证书..."

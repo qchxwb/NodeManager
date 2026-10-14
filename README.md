@@ -10,6 +10,7 @@ Node Manager 是一个轻量级、高度模块化的 Linux VPS 多协议节点�
 - **动态配置**：使用 `jq` 将所有节点状态持久化为 JSON 数据库，配置生成与订阅导出动态且可靠。
 - **自适应环境**：自动安装必要依赖，自动适配 UFW/firewalld/iptables 放行端口。
 - **免域名建站 (Argo)**：集成 Cloudflare Argo Tunnel，一键建立 VLESS+WS 隧道，无需购买域名和解析。
+- **Xray 证书固定适配 (Pinning)**：全面适配 Xray-core 最新证书安全机制，订阅中自动注入 SHA-256 证书指纹 (`pinSHA256`)。彻底解决 v2rayN 默认内核因自签名证书连不上的痛点，导入即可秒连。
 
 ## 支持协议
 

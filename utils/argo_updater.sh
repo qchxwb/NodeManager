@@ -7,6 +7,7 @@ source "$_UPDATER_DIR/../lib/system.sh"
 source "$_UPDATER_DIR/../lib/common.sh"
 source "$_UPDATER_DIR/../lib/config.sh"
 source "$_UPDATER_DIR/../utils/firewall.sh"
+source "$_UPDATER_DIR/../utils/cert.sh"
 source "$_UPDATER_DIR/../utils/subscription.sh"
 unset _UPDATER_DIR
 

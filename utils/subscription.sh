@@ -3,6 +3,7 @@
 
 _SUB_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 source "$_SUB_DIR/../lib/common.sh"
+source "$_SUB_DIR/../utils/cert.sh"
 unset _SUB_DIR
 
 get_node_uri() {
@@ -29,15 +30,25 @@ get_node_uri() {
     elif [[ "$type" == "hysteria2" ]]; then
         local password=$(echo "$node_json" | jq -r '.password')
         local port=$(echo "$node_json" | jq -r '.port')
+        local cert_pin=$(get_self_signed_cert_sha256)
+        local pin_arg=""
+        if [[ -n "$cert_pin" ]]; then
+            pin_arg="&pinSHA256=${cert_pin}"
+        fi
         
-        uri="hysteria2://${password}@${ip}:${port}/?insecure=1&sni=bing.com#Hysteria2"
+        uri="hysteria2://${password}@${ip}:${port}/?insecure=1${pin_arg}&sni=bing.com#Hysteria2"
     
     elif [[ "$type" == "tuic" ]]; then
         local uuid=$(echo "$node_json" | jq -r '.uuid')
         local password=$(echo "$node_json" | jq -r '.password')
         local port=$(echo "$node_json" | jq -r '.port')
+        local cert_pin=$(get_self_signed_cert_sha256)
+        local pin_arg=""
+        if [[ -n "$cert_pin" ]]; then
+            pin_arg="&pinSHA256=${cert_pin}"
+        fi
         
-        uri="tuic://${uuid}:${password}@${ip}:${port}/?sni=bing.com&alpn=h3&allow_insecure=1#TUIC"
+        uri="tuic://${uuid}:${password}@${ip}:${port}/?sni=bing.com&alpn=h3&allow_insecure=1${pin_arg}#TUIC"
         
     elif [[ "$type" == "argo" ]]; then
         local uuid=$(echo "$node_json" | jq -r '.uuid')
@@ -179,6 +190,7 @@ EOF
         elif [[ "$type" == "hysteria2" ]]; then
             local password=$(echo "$node" | jq -r '.password')
             local port=$(echo "$node" | jq -r '.port')
+            local cert_pin=$(get_self_signed_cert_sha256)
             cat >> "$clash_file" <<EOF
   - name: "Hysteria2-$port"
     type: hysteria2
@@ -188,11 +200,15 @@ EOF
     sni: bing.com
     skip-cert-verify: true
 EOF
+            if [[ -n "$cert_pin" ]]; then
+                echo "    ca-fingerprint: $cert_pin" >> "$clash_file"
+            fi
             proxy_names="${proxy_names}\n      - \"Hysteria2-$port\""
         elif [[ "$type" == "tuic" ]]; then
             local uuid=$(echo "$node" | jq -r '.uuid')
             local password=$(echo "$node" | jq -r '.password')
             local port=$(echo "$node" | jq -r '.port')
+            local cert_pin=$(get_self_signed_cert_sha256)
             cat >> "$clash_file" <<EOF
   - name: "TUIC-$port"
     type: tuic
@@ -204,6 +220,9 @@ EOF
     alpn: [h3]
     skip-cert-verify: true
 EOF
+            if [[ -n "$cert_pin" ]]; then
+                echo "    ca-fingerprint: $cert_pin" >> "$clash_file"
+            fi
             proxy_names="${proxy_names}\n      - \"TUIC-$port\""
         elif [[ "$type" == "argo" ]]; then
             local uuid=$(echo "$node" | jq -r '.uuid')
