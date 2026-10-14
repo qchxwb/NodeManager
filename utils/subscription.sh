@@ -33,7 +33,7 @@ get_node_uri() {
         local cert_pin=$(get_self_signed_cert_sha256)
         local pin_arg=""
         if [[ -n "$cert_pin" ]]; then
-            pin_arg="&pinSHA256=${cert_pin}"
+            pin_arg="&pinSHA256=${cert_pin}&pinnedPeerCertSha256=${cert_pin}"
         fi
         
         uri="hysteria2://${password}@${ip}:${port}/?insecure=1${pin_arg}&sni=bing.com#Hysteria2"
@@ -45,7 +45,7 @@ get_node_uri() {
         local cert_pin=$(get_self_signed_cert_sha256)
         local pin_arg=""
         if [[ -n "$cert_pin" ]]; then
-            pin_arg="&pinSHA256=${cert_pin}"
+            pin_arg="&pinSHA256=${cert_pin}&pinnedPeerCertSha256=${cert_pin}"
         fi
         
         uri="tuic://${uuid}:${password}@${ip}:${port}/?sni=bing.com&alpn=h3&allow_insecure=1${pin_arg}#TUIC"

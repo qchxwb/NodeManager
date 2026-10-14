@@ -5,10 +5,10 @@ generate_self_signed_cert() {
     local cert_dir="/etc/node-manager/certs/self_signed"
     mkdir -p "$cert_dir"
     
-    if [[ ! -f "$cert_dir/cert.pem" || ! -f "$cert_dir/key.pem" ]]; then
+    if [[ ! -s "$cert_dir/cert.pem" || ! -s "$cert_dir/key.pem" ]]; then
         print_info "正在生成自签名证书..." >&2
-        openssl req -x509 -nodes -days 3650 -newkey ec:<(openssl ecparam -name prime256v1) \
-            -keyout "$cert_dir/key.pem" -out "$cert_dir/cert.pem" \
+        openssl ecparam -name prime256v1 -genkey -noout -out "$cert_dir/key.pem" >/dev/null 2>&1
+        openssl req -new -x509 -nodes -days 3650 -key "$cert_dir/key.pem" -out "$cert_dir/cert.pem" \
             -subj "/C=US/ST=California/L=Los Angeles/O=Bing/CN=bing.com" >/dev/null 2>&1
     fi
     echo "$cert_dir"
@@ -16,10 +16,10 @@ generate_self_signed_cert() {
 
 get_self_signed_cert_sha256() {
     local cert_file="/etc/node-manager/certs/self_signed/cert.pem"
-    if [[ ! -f "$cert_file" ]]; then
+    if [[ ! -s "$cert_file" ]]; then
         generate_self_signed_cert >/dev/null 2>&1
     fi
-    if [[ -f "$cert_file" ]]; then
+    if [[ -s "$cert_file" ]]; then
         openssl x509 -in "$cert_file" -noout -fingerprint -sha256 2>/dev/null | cut -d'=' -f2 | tr -d ':' | tr '[:upper:]' '[:lower:]'
     fi
 }
