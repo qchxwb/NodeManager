@@ -11,7 +11,7 @@ init_db() {
     fi
     if [[ ! -f "$SETTINGS_FILE" ]]; then
         mkdir -p "$(dirname "$SETTINGS_FILE")"
-        echo '{"version": "1.1.2"}' > "$SETTINGS_FILE"
+        echo '{"version": "1.1.3"}' > "$SETTINGS_FILE"
     fi
     if [[ ! -d "/etc/node-manager/logs" ]]; then
         mkdir -p "/etc/node-manager/logs"
